@@ -1,0 +1,13 @@
+SystemDiskSize: 40
+RuntimeType: Container
+ServiceType: private
+ArtifactSourceType: DockerCompose
+ServiceBuildRegion: ap-southeast-1
+RepoName: aliyun-computenest/quickstart-next-ai-draw-io
+DockerComposeEnvPath: .env
+RegionId: cn-hangzhou
+CustomParameters: ''
+DockerComposeYamlPath: docker-compose.yml
+Owner: Alicloud-ComputeNest
+Branch: main
+Platform: github

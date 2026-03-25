@@ -1,0 +1,84 @@
+Service:
+  RegionId: cn-hangzhou
+  DeployType: ros
+  OperationMetadata:
+    StatusOperationConfigs:
+    - TemplateName: ECS单机版
+      SupportOperations:
+      - Start
+      - Stop
+      - Restart
+    SupportBackup: true
+    ModifyParametersConfig:
+    - TemplateName: ECS单机版
+      Operation:
+      - Name: 变更ECS实例规格
+        Description: 变更ECS实例规格
+        Type: Custom
+        Parameters:
+        - EcsInstanceType
+      - Name: 变更ECS实例密码
+        Description: 变更ECS实例密码
+        Type: Custom
+        Parameters:
+        - InstancePassword
+  UpgradeMetadata:
+    Description: 升级
+    SupportUpgradeFromVersions: []
+    SupportRollback: true
+    UpgradeComponents:
+    - Configuration
+    - Resource
+  DeployMetadata:
+    SupplierDeployMetadata:
+      SupplierTemplateConfigs:
+      - Name: ECS单机版
+        Url: 'ros_templates/template.yaml'
+        ArchitectureDiagramUrl: 'resources/architecture/architecture.jpg'
+        AllowedRegions:
+        - ap-southeast-1
+      ArtifactRelation:
+        ecs_image_quickstart-next-ai-draw-io:
+          ArtifactId: ${Artifact.EcsImage.ArtifactId}
+          ArtifactVersion: draft
+    TemplateConfigs:
+    - Name: ECS单机版
+      Url: 'ros_templates/template.yaml'
+      ArchitectureDiagramUrl: 'resources/architecture/architecture.jpg'
+      AllowedRegions:
+      - ap-southeast-1
+  ServiceType: private
+  ServiceInfo:
+    # 英文版可以再配置Locale为en-US的服务信息
+  - Locale: zh-CN
+    Name: Next AI Draw.io 社区版
+    ShortDescription: 一个基于 Next.js 的 Web 应用程序，它将 AI 功能与 draw.io 图表集成在一起。用户可以通过自然语言命令和
+      AI 辅助可视化来创建、修改和增强图表。
+    Image: 
+      https://service-info-public.oss-cn-hangzhou.aliyuncs.com/1853370294850618/service-image/c0a4639a-f477-4026-8181-dd71fd9a7d70.jpg
+    Softwares: []
+Artifact:
+  EcsImage:
+    ArtifactType: EcsImage
+    ArtifactName: ecs_image_quickstart-next-ai-draw-io
+    Description: quickstart-next-ai-draw-io EcsImage
+    SupportRegionIds:
+    - ap-southeast-1
+    ArtifactBuildProperty:
+      CodeRepo:
+        Platform: github
+        Owner: Alicloud-ComputeNest
+        RepoName: aliyun-computenest/quickstart-next-ai-draw-io
+        Branch: main
+      RegionId: ap-southeast-1
+      CommandType: RunShellScript
+      SystemDiskSize: 40
+      CommandContent: |-
+        mkdir -p /root/application
+        if [ -e "/root/code/data" ]; then cp -r "/root/code/data" "/root/application/"; fi
+        if [ -e "/root/code/.env" ]; then cp -r "/root/code/.env" "/root/application/"; fi
+        if [ -e "/root/code/docker-compose.yml" ]; then cp -r "/root/code/docker-compose.yml" "/root/application/"; fi
+        cd /root/application
+        sed -i 's/pull_policy: always/pull_policy: if_not_present/g' docker-compose.yml
+        docker compose -f docker-compose.yml build 
+        docker compose -f docker-compose.yml pull 2>&1 | stdbuf -oL grep -viE 'Downloading|sha256|extracting|KiB|Downloaded' || true;
