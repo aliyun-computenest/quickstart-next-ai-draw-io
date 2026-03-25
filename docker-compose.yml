@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  next-ai-draw-io:
+    image: ghcr.io/dayuanjiang/next-ai-draw-io:latest
+    container_name: next-ai-draw-io
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    # 如果需要持久化数据（视具体应用需求而定，通常可选）
+    volumes:
+      - ./data:/app/data
